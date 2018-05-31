@@ -1,5 +1,6 @@
 #include "ai.h"
 #include <iostream>
+#include <cstdlib>
 
 AI::AI(char ai, char human) : aiSign(ai), humanSign(human), treeDepth(AI_TREE_DEPTH) {}
 
@@ -61,9 +62,12 @@ MinimaxMove AI::minimax(Board *gameBoard, Status initialStatus, char player, int
 		return getRecursionCutoffMove(gameBoard, initialStatus);
 	}
 
+	std::vector<int> bestMovesVec;
 	int bestMoveAt = 0;
+	int bestScore = 0;
+
 	if (player == aiSign) {
-		int bestScore = -100000;
+		bestScore = -100000;
 		for (int i = 0; i < potentialMoves.size(); i++) {
 			if (potentialMoves.at(i).getScore() > bestScore) {
 				bestMoveAt = i;
@@ -72,7 +76,7 @@ MinimaxMove AI::minimax(Board *gameBoard, Status initialStatus, char player, int
 		}
 	}
 	else {
-		int bestScore = 100000;
+		bestScore = 100000;
 		for (int i = 0; i < potentialMoves.size(); i++) {
 			if (potentialMoves.at(i).getScore() < bestScore) {
 				bestMoveAt = i;
@@ -81,7 +85,16 @@ MinimaxMove AI::minimax(Board *gameBoard, Status initialStatus, char player, int
 		}
 	}
 
-	return potentialMoves.at(bestMoveAt);
+	for (int i = 0; i < potentialMoves.size(); i++) {
+		if (potentialMoves.at(i).getScore() == bestScore) {
+			bestMovesVec.push_back(i);
+		}
+	}
+
+	int chooseBestMove = rand() % bestMovesVec.size();
+
+	//return potentialMoves.at(bestMoveAt);
+	return potentialMoves.at(bestMovesVec.at(chooseBestMove));
 }
 
 
